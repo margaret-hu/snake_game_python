@@ -3,8 +3,8 @@ import turtle
 import random
 
 # Define program constants
-WIDTH = 800
-HEIGHT = 600
+WIDTH = 550
+HEIGHT = 550
 DELAY = 100  # Milliseconds
 FOOD_SIZE = 10
 
@@ -40,6 +40,10 @@ def set_snake_direction(direction):
 
 
 def game_loop():
+    # Clear the board for a new game
+    turtle.hideturtle()
+    turtle.clear()
+
     stamper.clearstamps()  # Remove existing stamps made by stamper.
 
     new_head = snake[-1].copy()
@@ -49,7 +53,7 @@ def game_loop():
     # Check collisions
     if new_head in snake or new_head[0] < - WIDTH / 2 or new_head[0] > WIDTH / 2 \
             or new_head[1] < - HEIGHT / 2 or new_head[1] > HEIGHT / 2:
-        reset()
+        game_over()
     else:
         # Add new head to snake body.
         snake.append(new_head)
@@ -84,7 +88,7 @@ def food_collision():
 def get_random_food_pos():
     x = random.randint(- WIDTH / 2 + FOOD_SIZE, WIDTH / 2 - FOOD_SIZE)
     y = random.randint(- HEIGHT / 2 + FOOD_SIZE, HEIGHT / 2 - FOOD_SIZE)
-    return (x, y)
+    return x, y
 
 
 def get_distance(pos1, pos2):
@@ -94,7 +98,7 @@ def get_distance(pos1, pos2):
     return distance
 
 
-def reset():
+def reset(x, y):
     global score, snake, snake_direction, food_pos
     score = 0
     snake = [[0, 0], [20, 0], [40, 0], [60, 0]]
@@ -102,6 +106,17 @@ def reset():
     food_pos = get_random_food_pos()
     food.goto(food_pos)
     game_loop()
+
+
+def game_over():
+    turtle.speed(0)
+    turtle.pu()
+    turtle.goto(0, 50)
+    turtle.color("black")
+    turtle.write("Game Over", align="center", font=(10))
+    turtle.goto(0, -30)
+    turtle.write("(Click anywhere to restart)", align="center", font=(0.0000001))
+    turtle.onscreenclick(reset)
 
 
 # Create a window where we will do our drawing.
@@ -125,11 +140,11 @@ stamper.penup()
 food = turtle.Turtle()
 food.shape("circle")
 food.color("red")
-food.shapesize(FOOD_SIZE / 20)
+food.shapesize(FOOD_SIZE / 15)
 food.penup()
 
 # Set animation in motion
-reset()
+reset(0, 0)
 
 # Finish nicely
 turtle.done()
